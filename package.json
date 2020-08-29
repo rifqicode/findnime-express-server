@@ -4,13 +4,15 @@
   "description": "scrapping",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "author": "muhammadrifqi.tb@gmail.com <rifqicode>",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.20.0",
     "cheerio": "^1.0.0-rc.3",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "puppeteer": "^5.2.1"
   }
 }

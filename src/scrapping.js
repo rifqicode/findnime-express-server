@@ -1,5 +1,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const puppeteer = require('puppeteer');
 
 class Scrapping {
 
@@ -32,11 +33,11 @@ class Scrapping {
     }
   }
 
-  async getEpisode() {
+  async getEpisodeLink() {
     try {
       const animeLink = await this.getAnimeLink();
       let result = []
-      for (const item of animeLink.slice(0, 1)) {
+      for (const item of animeLink) {
         result.push(await this.getEpisodeList(item));
       }
 
@@ -87,7 +88,7 @@ class Scrapping {
 
            dataEpisode.push({
              linkTitle: episodeTitle,
-             listDownloadLink: episodeListLink
+             downloadLink: episodeListLink
            })
 
            current+= 2;
@@ -106,6 +107,63 @@ class Scrapping {
     } catch (e) {
       return {}
     }
+  }
+
+  async getEpisodeDownloadLink() {
+      const episodeListLink = await this.getEpisodeLink();
+      let data = [];
+
+      for (const item of episodeListLink) {
+        let dataDownload = await this.bypassHumanVerification(item.dataEpisode);
+        
+        data.push({
+          name : item.title,
+          data : dataDownload
+        });
+      }
+
+      return data;
+  }
+
+  async bypassHumanVerification(dataDownloadLink) {
+      const browser = await puppeteer.launch();
+      let result = [];
+
+      for (const item of dataDownloadLink) {
+        const downloadLink = item.data[0].downloadLink;
+        const downloadName = item.data[0].linkTitle;
+        const getDownloadLink = await axios.get(downloadLink);
+        const $ = cheerio.load(getDownloadLink.data);
+  
+        let form = $('div.humancheck').find('form'),
+            formAction = form.attr('action'),
+            token = form.find('input[name=get]').val();
+
+        const page = await browser.newPage();
+        await page.setRequestInterception(true);
+        page.on('request', interceptedRequest => {
+          var data = {
+            method: 'POST',
+            postData: `get=${token}`,
+            headers: {
+              ...interceptedRequest.headers(),
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          };
+          interceptedRequest.continue(data);
+        });
+        const response = await page.goto(formAction);
+        const responseBody = await response.text();
+        
+        let link = responseBody.match(/[^"{=']+\.html/g)
+        result.push({
+          name : downloadName,
+          link : link
+        });
+      }
+      await browser.close();
+
+      return result;
   }
 }
 

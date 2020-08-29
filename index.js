@@ -12,7 +12,8 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/get-ongoing-anime', async (req, res) => {
-    var resultOnGoingAnime = await scrapping.getEpisode();
+    // var resultOnGoingAnime = await scrapping.getEpisodeLink();
+    var resultOnGoingAnime = await scrapping.getEpisodeDownloadLink();
 
     res.json({
       status: 200,
