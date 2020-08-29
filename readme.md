@@ -7,7 +7,7 @@
 <h3> Build with : </h3>
 <hr>
 <ul>
-    <li> Noda JS </li>
+    <li> Node JS </li>
     <li> Axios </li>
     <li> Cheerio </li>
     <li> Puppeteer </li>
