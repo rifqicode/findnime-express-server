@@ -1,10 +1,10 @@
 
 <div align="center">
-    FINDNIME Backend Server
+    <h3> FINDNIME Backend Server </h3>
 </div>
 <br>
 
-Build with :
+<h3> Build with : </h3>
 <hr>
 <ul>
     <li> Noda JS </li>
