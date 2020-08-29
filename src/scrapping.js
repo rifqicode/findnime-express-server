@@ -4,6 +4,14 @@ const puppeteer = require('puppeteer');
 
 class Scrapping {
 
+  async getListAnime() {
+      const url = 'https://moenime.web.id/daftar-anime-baru/';
+
+
+      console.log('hello');
+  }
+
+
   async getAnimeLink() {
     try {
       const url = 'https://moenime.web.id/tag/ongoing/';
@@ -37,7 +45,7 @@ class Scrapping {
     try {
       const animeLink = await this.getAnimeLink();
       let result = []
-      for (const item of animeLink) {
+      for (const item of animeLink.slice(0, 1)) {
         result.push(await this.getEpisodeList(item));
       }
 
@@ -157,8 +165,8 @@ class Scrapping {
         
         let link = responseBody.match(/[^"{=']+\.html/g)
         result.push({
-          name : downloadName,
-          link : link
+          name : item.title,
+          link : link.length > 0 ? link[0] : ''
         });
       }
       await browser.close();
