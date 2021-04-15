@@ -2,17 +2,40 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
 
+let AnimeEpisode = require('../schema/anime_episode/anime_episode.dao.js');
+
 class Scrapping {
 
+  constructor() {
+    this.base_site = 'https://moenime.web.id/';
+  }
+  
   async getListAnime() {
       const url = 'https://moenime.web.id/daftar-anime-baru/';
 
+      var { data } = await axios.get(url),
+          $ = cheerio.load(data);
 
-      console.log('hello');
+      let result = [];
+
+      $('#daftaranime').find('.tab-content').find('.tab-pane').find('.nyaalist').each((key, element) => {
+          let e = $(element);
+
+          let name = e.text(),
+              url = e.attr('href');
+          
+
+          result.push({
+            name : name,
+            url: `${this.base_site}${url}`
+          })
+      });
+
+      return result;
   }
 
 
-  async getAnimeLink() {
+  async getOngoingAnime() {
     try {
       const url = 'https://moenime.web.id/tag/ongoing/';
       const page = 1;
@@ -43,7 +66,7 @@ class Scrapping {
 
   async getEpisodeLink() {
     try {
-      const animeLink = await this.getAnimeLink();
+      const animeLink = await this.getOngoingAnime();
       let result = []
       for (const item of animeLink.slice(0, 1)) {
         result.push(await this.getEpisodeList(item));
