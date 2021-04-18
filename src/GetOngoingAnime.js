@@ -1,7 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-class GetListAnime {
+class GetOngoingAnime {
     constructor() {
       this.base = 'https://moenime.web.id/';
     }
@@ -15,10 +15,10 @@ class GetListAnime {
           let { data } = await axios.get(url),
               $ = cheerio.load(data);
 
-          $('#daftaranime').find('.nyaalist').each((key, element) => {
+          $('#ongoing').find('.nyaalist').each((key, element) => {
             let $element = $(element);
             let data = {
-              'name' : $element.text(),
+              'name' : $element.text().trim(),
               'link' : `${this.base}` + $element.attr('href'),
             }
 
@@ -32,4 +32,4 @@ class GetListAnime {
     }
 }
 
-module.exports = new GetListAnime()
+module.exports = new GetOngoingAnime()
