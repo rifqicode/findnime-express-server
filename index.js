@@ -9,12 +9,16 @@ const config = require('./config/config.js');
 const landing = require('./routes/Landing');
 const ongoingAnime = require('./routes/OngoingAnime');
 
+const cors = require('cors')
+const db = require('./config/database');
 
+
+db();
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-
+app.use(cors());
 
 app.use('/', landing);
 app.use('/ongoing-anime', ongoingAnime);
