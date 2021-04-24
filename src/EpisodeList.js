@@ -3,6 +3,7 @@ const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
 
 let AnimeEpisode = require('../schema/anime_episode/anime_episode.dao.js');
+let HumanVerification = require('../src/HumanVerification');
 
 class EpisodeList {
 
@@ -51,7 +52,8 @@ class EpisodeList {
   
            dataEpisode.push({
              linkTitle: episodeTitle,
-             downloadLink: episodeListLink.match('[^=]*$')[0]
+            //  downloadLink: episodeListLink.match('[^=]*$')[0]
+             downloadLink: await HumanVerification.getLinkDownload(episodeListLink)
            })
   
            current+= 2;
